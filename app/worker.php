@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 use Temporal\SampleUtils\DeclarationLocator;
 use Temporal\WorkerFactory;
-use Temporal\Samples\FileProcessing;
 
 ini_set('display_errors', 'stderr');
 include "vendor/autoload.php";
@@ -23,25 +22,17 @@ $declarations = DeclarationLocator::create(__DIR__ . '/src/');
 $factory = WorkerFactory::create();
 
 // Worker that listens on a task queue and hosts both workflow and activity implementations.
-$worker = $factory->newWorker();
+$worker = $factory->newWorker('app');
 
 foreach ($declarations->getWorkflowTypes() as $workflowType) {
     // Workflows are stateful. So you need a type to create instances.
     $worker->registerWorkflowTypes($workflowType);
 }
 
-foreach ($declarations->getActivityTypes() as $activityType) {
-    // Activities are stateless and thread safe. So a shared instance is used.
-    $worker->registerActivity($activityType);
-}
-
-// We can use task queue for more complex task routing, for example our FileProcessing
-// activity will receive unique, host specific, TaskQueue which can be used to process
-// files locally.
-$hostTaskQueue = gethostname();
-
-$factory->newWorker($hostTaskQueue)
-    ->registerActivityImplementations(new FileProcessing\StoreActivity($hostTaskQueue));
+//foreach ($declarations->getActivityTypes() as $activityType) {
+//    // Activities are stateless and thread safe. So a shared instance is used.
+//    $worker->registerActivity($activityType);
+//}
 
 // start primary loop
 $factory->run();

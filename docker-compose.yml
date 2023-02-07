@@ -46,10 +46,39 @@ services:
     ports:
       - 8088:8088
 
+  app1:
+    build:
+      context: .
+      args:
+        APP_PATH: app1/
+    volumes:
+      - ./app1:/var/app
+    depends_on:
+      - temporal
+    environment:
+      - "TEMPORAL_CLI_ADDRESS=temporal:7233"
+    command: [ "/usr/local/bin/wait-for-temporal.sh", "temporal", "/usr/local/bin/rr", "serve", "-c", "/var/app/.rr.yaml" ]
+
+  app2:
+    build:
+      context: .
+      args:
+        APP_PATH: app2/
+    volumes:
+      - ./app2:/var/app
+    depends_on:
+      - temporal
+    environment:
+      - "TEMPORAL_CLI_ADDRESS=temporal:7233"
+    command: [ "/usr/local/bin/wait-for-temporal.sh", "temporal", "/usr/local/bin/rr", "serve", "-c", "/var/app/.rr.yaml" ]
+
   app:
-    build: .
-#    volumes:
-#      - ./app:/var/app
+    build:
+      context: .
+      args:
+        APP_PATH: app/
+    volumes:
+      - ./app:/var/app
     depends_on:
       - temporal
     environment:

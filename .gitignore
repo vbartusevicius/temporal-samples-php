@@ -1,4 +1,6 @@
 app/vendor
+app1/vendor
+app2/vendor
 .idea
 app/rr
 app/rr.exe

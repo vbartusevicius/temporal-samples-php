@@ -1,5 +1,7 @@
 FROM php:8.0.15-cli
 
+ARG APP_PATH
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
   nano \
   bash \
@@ -16,7 +18,7 @@ RUN docker-php-ext-install zip \
 # Protobuf and GRPC
 ENV PROTOBUF_VERSION "3.19.2"
 RUN pecl channel-update pecl.php.net
-RUN pecl install protobuf-${PROTOBUF_VERSION} grpc \
+RUN pecl install protobuf-${PROTOBUF_VERSION} grpc-1.49.0 \
     && docker-php-ext-enable protobuf grpc
 
 # Install Temporal CLI
@@ -31,7 +33,7 @@ RUN chmod +x /usr/local/bin/wait-for-temporal.sh
 
 # Copy application codebase
 WORKDIR /var/app
-COPY app/ /var/app
+COPY ${APP_PATH} /var/app
 
 RUN composer install
 

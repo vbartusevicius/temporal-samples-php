@@ -26,7 +26,9 @@ class ExecuteCommand extends Command
     {
         $workflow = $this->workflowClient->newWorkflowStub(
             TripBookingWorkflowInterface::class,
-            WorkflowOptions::new()->withWorkflowExecutionTimeout(CarbonInterval::minute())
+            WorkflowOptions::new()
+                ->withWorkflowExecutionTimeout(CarbonInterval::minute())
+                ->withTaskQueue('app')
         );
 
         $output->writeln("Starting <comment>TripBookingWorkflow</comment>... ");
